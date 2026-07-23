@@ -189,7 +189,8 @@
   }
 
   function loadSection(id, filePath){
-    return fetch(filePath)
+    var cacheBust = filePath + (filePath.indexOf("?") > -1 ? "&" : "?") + "_=" + Date.now();
+    return fetch(cacheBust, { cache: "no-store" })
       .then(function(response){
         if(!response.ok){ throw new Error("Failed to load " + filePath); }
         return response.text();
