@@ -59,6 +59,7 @@
     backdrop-filter:blur(10px); border-bottom:1px solid var(--border);
     transition:box-shadow .3s ease;
   }
+  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   header.scrolled{ box-shadow:0 4px 24px rgba(43,43,43,0.06); }
   .nav-row{ display:flex; align-items:center; justify-content:space-between; height:84px; }
   .logo{ font-family:var(--serif); font-size:26px; font-weight:600; letter-spacing:0.5px; }
@@ -82,6 +83,72 @@
   }
   .burger{ display:none; background:none; border:none; }
   .burger svg{ width:24px; height:24px; stroke:var(--text); fill:none; stroke-width:1.5;}
+
+  /* ---------- Search / Profile / Basket panels ---------- */
+  .search-panel, .profile-panel{
+    position:sticky; top:84px; z-index:90; background:#fff;
+    border-bottom:1px solid var(--border);
+  }
+  .search-panel-inner, .profile-panel-inner{
+    display:flex; align-items:center; gap:14px; padding:14px 0;
+  }
+  .favorite-panel{
+    position:fixed; top:92px; right:24px; width:min(280px, calc(100vw - 32px));
+    background:#fff; border:1px solid var(--border); border-radius:20px;
+    box-shadow:0 22px 48px rgba(43,43,43,0.12); z-index:120; padding:14px;
+  }
+  .favorite-panel-header{
+    display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;
+  }
+  .favorite-icon{ font-size:18px; color:var(--error); }
+  .favorite-count{
+    margin-left:auto; min-width:22px; height:22px; border-radius:50%; background:var(--pink);
+    display:flex; align-items:center; justify-content:center; font-size:11px;
+  }
+  .favorite-panel-items{ display:grid; gap:10px; max-height:260px; overflow:auto; }
+  .favorite-panel-item{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background:var(--bg-2); border-radius:12px; padding:10px 12px; font-size:13px;
+  }
+  .favorite-panel-item span:last-child{ color:var(--text-2); font-size:12px; }
+  .favorite-empty{ font-size:12px; color:var(--text-2); padding:8px 0; }
+  .search-panel-inner input, .profile-form input{
+    width:100%; border:1px solid var(--border); border-radius:999px; padding:14px 18px; font-size:14px;
+  }
+  .profile-panel-inner{
+    padding:24px 0; align-items:flex-start; justify-content:space-between; gap:28px;
+  }
+  .profile-copy{ max-width:540px; }
+  .profile-copy h3{ font-size:30px; margin:6px 0 10px; }
+  .profile-copy p:last-child{ color:var(--text-2); }
+  .profile-form{
+    width:min(420px,100%); display:grid; gap:14px; background:var(--bg-2);
+    padding:20px; border-radius:20px;
+  }
+  .profile-form label span{ display:block; margin-bottom:6px; font-size:13px; font-weight:600; }
+
+  .basket-drawer{
+    position:fixed; top:0; right:0; height:100vh; width:min(420px, 100%); background:#fff;
+    box-shadow:-12px 0 40px rgba(43,43,43,0.12); z-index:250; transform:translateX(100%);
+    transition:transform .32s ease; display:flex; flex-direction:column;
+  }
+  .basket-drawer.open{ transform:translateX(0); }
+  .basket-header, .basket-footer{ padding:24px 24px 18px; border-bottom:1px solid var(--border); }
+  .basket-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+  .basket-header h3{ font-size:28px; }
+  .basket-items{ padding:20px 24px; overflow:auto; flex:1; display:grid; gap:12px; }
+  .basket-item{
+    display:grid; grid-template-columns:72px 1fr auto; gap:12px; align-items:center;
+    padding:12px; border:1px solid var(--border); border-radius:16px; background:var(--bg-2);
+  }
+  .basket-thumb{ width:72px; height:72px; border-radius:12px; background:var(--sage); }
+  .basket-item strong{ display:block; font-size:14px; }
+  .basket-item span{ font-size:12px; color:var(--text-2); }
+  .basket-qty{ display:flex; align-items:center; gap:8px; }
+  .basket-qty button{ width:24px; height:24px; border-radius:50%; border:1px solid var(--border); background:#fff; }
+  .basket-empty{ text-align:center; padding:24px; color:var(--text-2); }
+  .basket-total-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
 
   /* ---------- Buttons ---------- */
   .btn{
@@ -154,6 +221,11 @@
   /* ---------- Product grid ---------- */
   .prod-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:28px; }
   .prod-card{ position:relative; }
+  .prod-card.hidden{ display:none; }
+  .no-results{
+    grid-column:1 / -1; text-align:center; padding:36px; background:var(--bg-2); border-radius:20px;
+    color:var(--text-2);
+  }
   .prod-media{
     border-radius:var(--r-lg); background:var(--bg-2); aspect-ratio:1/1.1; position:relative;
     overflow:hidden; margin-bottom:16px; border:1px solid var(--border);
@@ -174,6 +246,8 @@
     display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(43,43,43,0.10);
   }
   .qa-btn svg{ width:16px; height:16px; stroke:var(--text); fill:none; stroke-width:1.5; }
+  .wish-btn.active{ background:var(--pink); }
+  .wish-btn.active svg{ fill:var(--error); stroke:var(--error); }
   .stock-flag{
     position:absolute; left:12px; top:12px; background:#fff; font-size:11px; font-weight:600;
     padding:5px 10px; border-radius:999px; color:var(--error); letter-spacing:0.03em;

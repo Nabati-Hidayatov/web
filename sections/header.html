@@ -10,19 +10,19 @@
       <a href="#blog">Journal</a>
     </nav>
     <div class="nav-icons">
-      <button class="icon-btn" aria-label="Search">
+      <button class="icon-btn" data-action="toggle-search" aria-label="Search products">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
-      <button class="icon-btn" aria-label="Account">
+      <button class="icon-btn" data-action="toggle-profile" aria-label="Open profile">
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </button>
-      <button class="icon-btn" aria-label="Wishlist, 2 items">
+      <button class="icon-btn" data-action="toggle-favorites" aria-label="Wishlist">
         <svg viewBox="0 0 24 24"><path d="M20.8 4.6c-1.9-1.9-5-1.9-6.9 0L12 5.5l-1.9-.9c-1.9-1.9-5-1.9-6.9 0-1.9 1.9-1.9 5 0 6.9L12 21l8.8-8.9c1.9-1.9 1.9-5 0-6.9z"/></svg>
-        <span class="cart-count" aria-hidden="true">2</span>
+        <span class="cart-count" id="wishlistCount" aria-hidden="true">0</span>
       </button>
-      <button class="icon-btn" id="cartBtn" aria-label="Cart, 3 items">
+      <button class="icon-btn" id="cartBtn" data-action="toggle-basket" aria-label="Open basket">
         <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
-        <span class="cart-count" id="cartCount" aria-hidden="true">3</span>
+        <span class="cart-count" id="cartCount" aria-hidden="true">0</span>
       </button>
       <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false">
         <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -30,6 +30,44 @@
     </div>
   </div>
 </header>
+
+<div class="search-panel" id="searchPanel" hidden>
+  <div class="container search-panel-inner">
+    <label class="sr-only" for="siteSearch">Search products</label>
+    <input id="siteSearch" type="search" placeholder="Search skincare, serum, SPF..." autocomplete="off">
+    <button class="btn btn-secondary" type="button" data-close-search>Close</button>
+  </div>
+</div>
+
+<aside class="favorite-panel" id="favoritePanel" aria-label="Favorites">
+  <div class="favorite-panel-header">
+    <span class="favorite-icon">❤</span>
+    <span>Favorites</span>
+    <span class="favorite-count" id="favoritePanelCount">0</span>
+  </div>
+  <div class="favorite-panel-items" id="favoritePanelItems"></div>
+</aside>
+
+<div class="profile-panel" id="profilePanel" hidden>
+  <div class="container profile-panel-inner">
+    <div class="profile-copy">
+      <p class="eyebrow">Your account</p>
+      <h3>Keep your routine in one place</h3>
+      <p>Save your preferences and checkout faster on your next visit.</p>
+    </div>
+    <form id="profileForm" class="profile-form">
+      <label>
+        <span>Name</span>
+        <input type="text" id="profileName" placeholder="Your name" required>
+      </label>
+      <label>
+        <span>Email</span>
+        <input type="email" id="profileEmail" placeholder="you@example.com" required>
+      </label>
+      <button class="btn btn-primary" type="submit">Save profile</button>
+    </form>
+  </div>
+</div>
 
 <div class="nav-scrim" id="navScrim"></div>
 <aside class="mobile-nav" id="mobileNav" aria-label="Mobile menu">
@@ -44,4 +82,24 @@
     <li><a href="#our-story">Our Story</a></li>
     <li><a href="#blog">Journal</a></li>
   </ul>
+</aside>
+
+<aside class="basket-drawer" id="basketDrawer" aria-hidden="true">
+  <div class="basket-header">
+    <div>
+      <p class="eyebrow">Basket</p>
+      <h3>Your bag</h3>
+    </div>
+    <button class="close-drawer" data-close-basket aria-label="Close basket">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="basket-items" id="basketItems"></div>
+  <div class="basket-footer">
+    <div class="basket-total-row">
+      <span>Total</span>
+      <strong id="basketTotal">$0</strong>
+    </div>
+    <button class="btn btn-primary" type="button">Checkout</button>
+  </div>
 </aside>
