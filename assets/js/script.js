@@ -20,7 +20,16 @@
   };
 
   var products = [
-    {name:"La Roche-Posay Toleriane Purifying", tag:"Best seller", price:24, old:null, rating:"★★★★★ 4.9 (312)", stock:"Only 6 left", color:"var(--sage)"},
+  {
+    name: "AXIS-Y dark spot serum",
+    tag: "Best seller",
+    price: 25,
+    old: null,
+    rating: "★★★★★ 4.9 (312)",
+    stock: "Only 6 left",
+    color: "var(--sage)",
+    image: "assets/images/AXIS-Y dark spot serum.jpeg"
+  },
     {name:"CeraVe Hydrating Facial Cleanser", tag:"New", price:18, old:22, rating:"★★★★★ 4.8 (198)", stock:null, color:"var(--beige)"},
     {name:"The Ordinary Niacinamide 10%", tag:"Trending", price:9, old:null, rating:"★★★★☆ 4.6 (140)", stock:null, color:"var(--pink)"},
     {name:"Eucerin Daily Hydration SPF 50", tag:"Best seller", price:21, old:null, rating:"★★★★★ 4.9 (401)", stock:"Only 4 left", color:"#EFEFEF"},
@@ -98,7 +107,9 @@
             '<button class="qa-btn" aria-label="Quick view ' + product.name + '"><svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button>' +
             '<button class="qa-btn wish-btn ' + (isFavorite ? 'active' : '') + '" data-product-name="' + product.name + '" aria-label="Toggle ' + product.name + ' wishlist" aria-pressed="' + isFavorite + '"><svg viewBox="0 0 24 24"><path d="M20.8 4.6c-1.9-1.9-5-1.9-6.9 0L12 5.5l-1.9-.9c-1.9-1.9-5-1.9-6.9 0-1.9 1.9-1.9 5 0 6.9L12 21l8.8-8.9c1.9-1.9 1.9-5 0-6.9z"/></svg></button>' +
           '</div>' +
-          '<div class="swatch"><svg class="bottle" viewBox="0 0 80 140"><rect class="glass" x="18" y="24" width="44" height="100" rx="12"/><rect class="liquid" x="18" y="70" width="44" height="54" rx="8" fill="' + product.color + '"/><rect x="28" y="6" width="24" height="20" rx="5" fill="#2B2B2B" opacity="0.85"/></svg></div>' +
+          (product.image
+            ? '<img class="prod-image" src="' + product.image + '" alt="' + product.name + '">'
+            : '<div class="swatch"><svg class="bottle" viewBox="0 0 80 140"><rect class="glass" x="18" y="24" width="44" height="100" rx="12"/><rect class="liquid" x="18" y="70" width="44" height="54" rx="8" fill="' + product.color + '"/><rect x="28" y="6" width="24" height="20" rx="5" fill="#2B2B2B" opacity="0.85"/></svg></div>') +
         '</div>' +
         '<div class="prod-info">' +
           '<span class="tag">' + product.tag + '</span>' +
