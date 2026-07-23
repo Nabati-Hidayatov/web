@@ -61,7 +61,7 @@
   }
 
   function formatMoney(value){
-    return "$" + value;
+    return "₼" + value;
   }
 
   function loadSection(id, filePath){
