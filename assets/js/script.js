@@ -357,6 +357,9 @@
   function addToCart(name){
     state.cart[name] = Number(state.cart[name] || 0) + 1;
     saveState();
+    if(page === "basket"){
+      renderBasketPage();
+    }
     renderBasket();
     showToast("Added " + name + " to basket");
   }
@@ -367,6 +370,9 @@
     if(next <= 0){ delete state.cart[name]; }
     else { state.cart[name] = next; }
     saveState();
+    if(page === "basket"){
+      renderBasketPage();
+    }
     renderBasket();
   }
 
