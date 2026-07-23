@@ -181,7 +181,8 @@
         name: item.name,
         price: item.price,
         quantity: quantity,
-        color: item.color
+        color: item.color,
+        image: item.image
       };
     }).filter(Boolean);
 
@@ -198,7 +199,9 @@
       var basketItem = document.createElement("div");
       basketItem.className = "basket-item";
       basketItem.innerHTML =
-        '<div class="basket-thumb" style="background:' + item.color + '22;"></div>' +
+        '<div class="basket-thumb" style="background:' + item.color + '22;">' +
+          (item.image ? '<img src="' + item.image + '" alt="' + item.name + '">' : '') +
+        '</div>' +
         '<div>' +
           '<strong>' + item.name + '</strong>' +
           '<span>' + formatMoney(item.price) + ' each</span>' +
