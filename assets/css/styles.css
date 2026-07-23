@@ -96,7 +96,9 @@
     position:fixed; top:92px; right:24px; width:min(280px, calc(100vw - 32px));
     background:#fff; border:1px solid var(--border); border-radius:20px;
     box-shadow:0 22px 48px rgba(43,43,43,0.12); z-index:120; padding:14px;
+    opacity:0; pointer-events:none; transform:translateY(-12px); transition:all .25s ease;
   }
+  .favorite-panel.open{ opacity:1; pointer-events:auto; transform:translateY(0); }
   .favorite-panel-header{
     display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700;
     text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;

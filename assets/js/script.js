@@ -20,14 +20,14 @@
   };
 
   var products = [
-    {name:"Renewal Serum", tag:"Best seller", price:58, old:null, rating:"★★★★★ 4.9 (312)", stock:"Only 6 left", color:"var(--sage)"},
-    {name:"Barrier Repair Cream", tag:"New", price:46, old:54, rating:"★★★★★ 4.8 (198)", stock:null, color:"var(--beige)"},
-    {name:"Calm Cleansing Balm", tag:"Sensitive skin", price:32, old:null, rating:"★★★★☆ 4.6 (140)", stock:null, color:"var(--pink)"},
-    {name:"Daily Mineral SPF 40", tag:"Best seller", price:38, old:null, rating:"★★★★★ 4.9 (401)", stock:"Only 4 left", color:"#EFEFEF"},
-    {name:"Cloud Milk Cleanser", tag:"Daily cleanse", price:29, old:null, rating:"★★★★★ 4.8 (226)", stock:null, color:"var(--beige)"},
-    {name:"Rose Quartz Mist", tag:"Hydration", price:26, old:null, rating:"★★★★☆ 4.7 (151)", stock:"Only 9 left", color:"var(--pink)"},
-    {name:"Night Recovery Oil", tag:"Night ritual", price:52, old:null, rating:"★★★★★ 4.9 (189)", stock:null, color:"var(--sage)"},
-    {name:"Tinted Mineral Veil", tag:"Glow finish", price:34, old:40, rating:"★★★★★ 4.8 (204)", stock:null, color:"#EAE7DE"}
+    {name:"La Roche-Posay Toleriane Purifying", tag:"Best seller", price:24, old:null, rating:"★★★★★ 4.9 (312)", stock:"Only 6 left", color:"var(--sage)"},
+    {name:"CeraVe Hydrating Facial Cleanser", tag:"New", price:18, old:22, rating:"★★★★★ 4.8 (198)", stock:null, color:"var(--beige)"},
+    {name:"The Ordinary Niacinamide 10%", tag:"Trending", price:9, old:null, rating:"★★★★☆ 4.6 (140)", stock:null, color:"var(--pink)"},
+    {name:"Eucerin Daily Hydration SPF 50", tag:"Best seller", price:21, old:null, rating:"★★★★★ 4.9 (401)", stock:"Only 4 left", color:"#EFEFEF"},
+    {name:"Bioderma Sensibio Gel Moussant", tag:"Daily cleanse", price:16, old:null, rating:"★★★★★ 4.8 (226)", stock:null, color:"var(--beige)"},
+    {name:"Avene Thermal Spring Water", tag:"Hydration", price:15, old:null, rating:"★★★★☆ 4.7 (151)", stock:"Only 9 left", color:"var(--pink)"},
+    {name:"SkinCeuticals CE Ferulic", tag:"Favorite", price:182, old:null, rating:"★★★★★ 4.9 (189)", stock:null, color:"var(--sage)"},
+    {name:"Fenty Beauty Eaze Drop Blurring Skin Tint", tag:"Glow finish", price:38, old:45, rating:"★★★★★ 4.8 (204)", stock:null, color:"#EAE7DE"}
   ];
 
   var state = loadState();
@@ -249,6 +249,8 @@
     var profileForm = document.getElementById("profileForm");
     var profileName = document.getElementById("profileName");
     var profileEmail = document.getElementById("profileEmail");
+    var favoriteButton = document.querySelector('[data-action="toggle-favorites"]');
+    var favoritePanel = document.getElementById("favoritePanel");
     var cartButton = document.querySelector('[data-action="toggle-basket"]');
     var basketDrawer = document.getElementById("basketDrawer");
     var closeBasket = document.querySelector('[data-close-basket]');
@@ -260,6 +262,7 @@
     function closeAllPanels(){
       if(searchPanel){ searchPanel.hidden = true; }
       if(profilePanel){ profilePanel.hidden = true; }
+      if(favoritePanel){ favoritePanel.classList.remove("open"); favoritePanel.setAttribute("aria-hidden", "true"); }
       if(basketDrawer){ basketDrawer.classList.remove("open"); basketDrawer.setAttribute("aria-hidden", "true"); }
       if(scrim){ scrim.classList.remove("show"); }
       if(mobileNav){ mobileNav.classList.remove("open"); }
@@ -288,6 +291,18 @@
         scrim.classList.add("show");
         if(profileName){ profileName.value = state.profile.name || ""; }
         if(profileEmail){ profileEmail.value = state.profile.email || ""; }
+      });
+    }
+
+    if(favoriteButton && favoritePanel){
+      favoriteButton.addEventListener("click", function(){
+        var isOpen = favoritePanel.classList.contains("open");
+        closeAllPanels();
+        if(!isOpen){
+          favoritePanel.classList.add("open");
+          favoritePanel.setAttribute("aria-hidden", "false");
+          scrim.classList.add("show");
+        }
       });
     }
 
@@ -372,6 +387,7 @@
       if(e.key === "Escape"){
         if(searchPanel && !searchPanel.hidden){ searchPanel.hidden = true; scrim.classList.remove("show"); }
         if(profilePanel && !profilePanel.hidden){ profilePanel.hidden = true; scrim.classList.remove("show"); }
+        if(favoritePanel && favoritePanel.classList.contains("open")){ favoritePanel.classList.remove("open"); favoritePanel.setAttribute("aria-hidden", "true"); scrim.classList.remove("show"); }
         if(basketDrawer && basketDrawer.classList.contains("open")){ basketDrawer.classList.remove("open"); basketDrawer.setAttribute("aria-hidden", "true"); scrim.classList.remove("show"); }
       }
     });
