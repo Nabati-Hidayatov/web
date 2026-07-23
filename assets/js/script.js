@@ -96,7 +96,7 @@
           (product.stock ? '<span class="stock-flag">' + product.stock + '</span>' : '') +
           '<div class="quick-actions">' +
             '<button class="qa-btn" aria-label="Quick view ' + product.name + '"><svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button>' +
-            '<button class="qa-btn wish-btn ' + (isFavorite ? 'active' : '') + '" aria-label="Toggle ' + product.name + ' wishlist" aria-pressed="' + isFavorite + '"><svg viewBox="0 0 24 24"><path d="M20.8 4.6c-1.9-1.9-5-1.9-6.9 0L12 5.5l-1.9-.9c-1.9-1.9-5-1.9-6.9 0-1.9 1.9-1.9 5 0 6.9L12 21l8.8-8.9c1.9-1.9 1.9-5 0-6.9z"/></svg></button>' +
+            '<button class="qa-btn wish-btn ' + (isFavorite ? 'active' : '') + '" data-product-name="' + product.name + '" aria-label="Toggle ' + product.name + ' wishlist" aria-pressed="' + isFavorite + '"><svg viewBox="0 0 24 24"><path d="M20.8 4.6c-1.9-1.9-5-1.9-6.9 0L12 5.5l-1.9-.9c-1.9-1.9-5-1.9-6.9 0-1.9 1.9-1.9 5 0 6.9L12 21l8.8-8.9c1.9-1.9 1.9-5 0-6.9z"/></svg></button>' +
           '</div>' +
           '<div class="swatch"><svg class="bottle" viewBox="0 0 80 140"><rect class="glass" x="18" y="24" width="44" height="100" rx="12"/><rect class="liquid" x="18" y="70" width="44" height="54" rx="8" fill="' + product.color + '"/><rect x="28" y="6" width="24" height="20" rx="5" fill="#2B2B2B" opacity="0.85"/></svg></div>' +
         '</div>' +
@@ -121,6 +121,15 @@
     if(cartCount){ cartCount.textContent = String(totalItems); }
     if(wishlistCount){ wishlistCount.textContent = String(favoriteCount); }
     if(favoritePanelCount){ favoritePanelCount.textContent = String(favoriteCount); }
+  }
+
+  function syncFavoriteButtonStates(){
+    document.querySelectorAll(".wish-btn").forEach(function(button){
+      var productName = button.dataset.productName;
+      var isFavorite = Boolean(state.favorites[productName]);
+      button.classList.toggle("active", isFavorite);
+      button.setAttribute("aria-pressed", String(isFavorite));
+    });
   }
 
   function renderFavoritePanel(){
@@ -225,7 +234,7 @@
     if(state.favorites[name]){ delete state.favorites[name]; showToast("Removed " + name + " from wishlist"); }
     else { state.favorites[name] = true; showToast("Saved " + name + " to wishlist"); }
     saveState();
-    renderProductGrid();
+    syncFavoriteButtonStates();
     renderFavoritePanel();
     updateHeaderCounts();
   }
@@ -350,7 +359,7 @@
 
       var wishButton = e.target.closest(".wish-btn");
       if(wishButton){
-        toggleFavorite(wishButton.closest(".prod-card").querySelector("h4").textContent);
+        toggleFavorite(wishButton.dataset.productName || wishButton.closest(".prod-card").querySelector("h4").textContent);
       }
 
       var cartDeltaButton = e.target.closest("[data-cart-delta]");
@@ -372,6 +381,7 @@
     renderProductGrid();
     renderBasket();
     renderFavoritePanel();
+    syncFavoriteButtonStates();
     updateHeaderCounts();
     initHeaderControls();
 
