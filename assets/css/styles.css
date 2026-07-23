@@ -231,14 +231,14 @@
     overflow:hidden; margin-bottom:16px; border:1px solid var(--border);
   }
   .prod-media .swatch{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:1;
   }
   .bottle{ width:38%; }
   .bottle .glass{ fill:rgba(255,255,255,0.55); stroke:var(--text-2); stroke-width:1; }
   .bottle .liquid{ opacity:0.85; }
   .quick-actions{
     position:absolute; right:12px; top:12px; display:flex; flex-direction:column; gap:8px;
-    opacity:0; transform:translateX(8px); transition:all .25s ease;
+    opacity:1; transform:translateX(0); transition:all .25s ease; z-index:3;
   }
   .prod-card:hover .quick-actions{ opacity:1; transform:translateX(0); }
   .qa-btn{
