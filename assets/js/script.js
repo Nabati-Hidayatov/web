@@ -1,7 +1,8 @@
 (function(){
   "use strict";
 
-  var sectionMap = {
+  var page = document.body.dataset.page || "home";
+  var sectionMap = page === "home" ? {
     "topbar-placeholder": "sections/topbar.html",
     "header-placeholder": "sections/header.html",
     "hero-placeholder": "sections/hero.html",
@@ -16,6 +17,10 @@
     "sustainability-placeholder": "sections/sustainability.html",
     "gallery-placeholder": "sections/gallery.html",
     "newsletter-placeholder": "sections/newsletter.html",
+    "footer-placeholder": "sections/footer.html"
+  } : {
+    "topbar-placeholder": "sections/topbar.html",
+    "header-placeholder": "sections/header.html",
     "footer-placeholder": "sections/footer.html"
   };
 
@@ -64,6 +69,125 @@
     return "₼" + value;
   }
 
+  function getProductByName(name){
+    return products.find(function(product){ return product.name === name; }) || null;
+  }
+
+  function goToProduct(name){
+    if(!name){ return; }
+    window.location.href = "product.html?product=" + encodeURIComponent(name);
+  }
+
+  function renderFavoritesPage(){
+    var container = document.getElementById("favorites-page-content");
+    if(!container){ return; }
+
+    var favoriteProducts = products.filter(function(product){ return Boolean(state.favorites[product.name]); });
+
+    if(!favoriteProducts.length){
+      container.innerHTML = '<div class="page-card empty-page-card"><p class="eyebrow">Wishlist</p><h1>Your favorites is empty</h1><p>Tap the heart on any product to save it here.</p><a class="btn btn-primary" href="index.html#shop">Back to shop</a></div>';
+      return;
+    }
+
+    container.innerHTML =
+      '<div class="page-card"><p class="eyebrow">Wishlist</p><h1>Your saved products</h1><div class="page-list">' +
+        favoriteProducts.map(function(product){
+          return '<article class="page-list-item" data-page-product="' + product.name + '">' +
+            '<div class="page-thumb" style="background:' + product.color + '22;">' +
+              (product.image ? '<img src="' + product.image + '" alt="' + product.name + '">' : '') +
+            '</div>' +
+            '<div class="page-list-copy">' +
+              '<strong>' + product.name + '</strong>' +
+              '<span>' + product.tag + '</span>' +
+              '<small>' + formatMoney(product.price) + '</small>' +
+            '</div>' +
+            '<div class="page-list-actions">' +
+              '<button class="btn btn-secondary" type="button" data-open-product="' + product.name + '">View</button>' +
+              '<button class="btn btn-light" type="button" data-remove-favorite="' + product.name + '">Remove</button>' +
+            '</div>' +
+          '</article>';
+        }).join("") +
+      '</div></div>';
+  }
+
+  function renderBasketPage(){
+    var container = document.getElementById("basket-page-content");
+    if(!container){ return; }
+
+    var cartEntries = Object.keys(state.cart).map(function(name){
+      var item = getProductByName(name);
+      if(!item){ return null; }
+      return {
+        product: item,
+        quantity: state.cart[name]
+      };
+    }).filter(Boolean);
+
+    if(!cartEntries.length){
+      container.innerHTML = '<div class="page-card empty-page-card"><p class="eyebrow">Basket</p><h1>Your basket is empty</h1><p>Pick a serum, SPF, or premium beauty favorite to begin.</p><a class="btn btn-primary" href="index.html#shop">Go to shop</a></div>';
+      return;
+    }
+
+    var total = cartEntries.reduce(function(sum, entry){ return sum + entry.product.price * entry.quantity; }, 0);
+
+    container.innerHTML =
+      '<div class="page-card"><p class="eyebrow">Basket</p><h1>Your bag</h1>' +
+      '<div class="basket-page-grid">' +
+        '<div class="basket-page-items">' + cartEntries.map(function(entry){
+          return '<article class="page-list-item" data-page-product="' + entry.product.name + '">' +
+            '<div class="page-thumb" style="background:' + entry.product.color + '22;">' +
+              (entry.product.image ? '<img src="' + entry.product.image + '" alt="' + entry.product.name + '">' : '') +
+            '</div>' +
+            '<div class="page-list-copy">' +
+              '<strong>' + entry.product.name + '</strong>' +
+              '<span>' + formatMoney(entry.product.price) + ' each</span>' +
+              '<small>Qty ' + entry.quantity + '</small>' +
+            '</div>' +
+            '<div class="page-list-actions basket-actions">' +
+              '<button class="basket-step" type="button" data-cart-delta="-1" data-name="' + entry.product.name + '">−</button>' +
+              '<span>' + entry.quantity + '</span>' +
+              '<button class="basket-step" type="button" data-cart-delta="1" data-name="' + entry.product.name + '">+</button>' +
+            '</div>' +
+          '</article>';
+        }).join("") + '</div>' +
+        '<aside class="basket-summary"><h3>Summary</h3><div class="basket-total-line"><span>Subtotal</span><strong>' + formatMoney(total) + '</strong></div><button class="btn btn-primary" type="button">Checkout</button></aside>' +
+      '</div></div>';
+  }
+
+  function renderProductDetailPage(){
+    var container = document.getElementById("product-page-content");
+    if(!container){ return; }
+
+    var params = new URLSearchParams(window.location.search);
+    var productName = params.get("product") || "";
+    var product = getProductByName(productName);
+
+    if(!product){
+      container.innerHTML = '<div class="page-card empty-page-card"><p class="eyebrow">Product</p><h1>Product not found</h1><p>The item you tried to open is not available.</p><a class="btn btn-primary" href="index.html#shop">Return to shop</a></div>';
+      return;
+    }
+
+    var isFavorite = Boolean(state.favorites[product.name]);
+
+    container.innerHTML =
+      '<div class="product-detail-layout">' +
+        '<div class="product-detail-media" style="background:' + product.color + '22;">' +
+          (product.image ? '<img src="' + product.image + '" alt="' + product.name + '">' : '') +
+        '</div>' +
+        '<div class="product-detail-copy">' +
+          '<p class="eyebrow">' + product.tag + '</p>' +
+          '<h1>' + product.name + '</h1>' +
+          '<div class="rating">' + product.rating + '</div>' +
+          '<div class="prod-price detail-price"><span>' + formatMoney(product.price) + '</span>' + (product.old ? '<span class="old">' + formatMoney(product.old) + '</span>' : '') + '</div>' +
+          '<p class="product-description">A premium marketplace pick from a top beauty brand, curated for your routine.</p>' +
+          '<div class="product-detail-actions">' +
+            '<button class="btn btn-primary" type="button" data-name="' + product.name + '">Add to Basket</button>' +
+            '<button class="btn btn-secondary" type="button" data-product-name="' + product.name + '" data-detail-favorite="1" aria-pressed="' + isFavorite + '">' + (isFavorite ? 'Saved' : 'Save to Wishlist') + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
   function loadSection(id, filePath){
     return fetch(filePath)
       .then(function(response){
@@ -100,6 +224,7 @@
       var card = document.createElement("div");
       var isFavorite = Boolean(state.favorites[product.name]);
       card.className = "prod-card reveal";
+      card.dataset.productName = product.name;
       card.innerHTML =
         '<div class="prod-media" style="background:' + product.color + '22;">' +
           (product.stock ? '<span class="stock-flag">' + product.stock + '</span>' : '') +
@@ -308,15 +433,9 @@
       });
     }
 
-    if(favoriteButton && favoritePanel){
+    if(favoriteButton){
       favoriteButton.addEventListener("click", function(){
-        var isOpen = favoritePanel.classList.contains("open");
-        closeAllPanels();
-        if(!isOpen){
-          favoritePanel.classList.add("open");
-          favoritePanel.setAttribute("aria-hidden", "false");
-          scrim.classList.add("show");
-        }
+        window.location.href = "favorites.html";
       });
     }
 
@@ -334,12 +453,9 @@
       });
     }
 
-    if(cartButton && basketDrawer){
+    if(cartButton){
       cartButton.addEventListener("click", function(){
-        closeAllPanels();
-        basketDrawer.classList.add("open");
-        basketDrawer.setAttribute("aria-hidden", "false");
-        scrim.classList.add("show");
+        window.location.href = "basket.html";
       });
     }
 
@@ -383,17 +499,58 @@
     document.addEventListener("click", function(e){
       var addButton = e.target.closest(".add-cart-mini");
       if(addButton){
+        e.stopPropagation();
         addToCart(addButton.dataset.name);
       }
 
       var wishButton = e.target.closest(".wish-btn");
       if(wishButton){
+        e.stopPropagation();
         toggleFavorite(wishButton.dataset.productName || wishButton.closest(".prod-card").querySelector("h4").textContent);
       }
 
       var cartDeltaButton = e.target.closest("[data-cart-delta]");
       if(cartDeltaButton){
+        e.stopPropagation();
         updateCartQuantity(cartDeltaButton.dataset.name, Number(cartDeltaButton.dataset.cartDelta));
+      }
+
+      var detailFavoriteButton = e.target.closest("[data-detail-favorite]");
+      if(detailFavoriteButton){
+        e.stopPropagation();
+        toggleFavorite(detailFavoriteButton.dataset.productName);
+        renderProductDetailPage();
+      }
+
+      var addToBasketButton = e.target.closest("[data-name]");
+      if(addToBasketButton && !addToBasketButton.classList.contains("btn-secondary") && !addToBasketButton.closest(".page-list-item")){
+        e.stopPropagation();
+        addToCart(addToBasketButton.dataset.name);
+      }
+
+      var removeFavoriteButton = e.target.closest("[data-remove-favorite]");
+      if(removeFavoriteButton){
+        e.stopPropagation();
+        toggleFavorite(removeFavoriteButton.dataset.removeFavorite);
+        renderFavoritesPage();
+      }
+
+      var openProductButton = e.target.closest("[data-open-product]");
+      if(openProductButton){
+        e.stopPropagation();
+        goToProduct(openProductButton.dataset.openProduct);
+      }
+
+      var pageProductCard = e.target.closest("[data-page-product]");
+      if(pageProductCard && !e.target.closest("button")){
+        e.stopPropagation();
+        goToProduct(pageProductCard.dataset.pageProduct);
+      }
+
+      var productCard = e.target.closest(".prod-card");
+      if(productCard && !e.target.closest("button")){
+        e.stopPropagation();
+        goToProduct(productCard.dataset.productName);
       }
     });
 
@@ -408,9 +565,24 @@
   }
 
   function initSite(){
-    renderProductGrid();
-    renderBasket();
-    renderFavoritePanel();
+    if(page === "home"){
+      renderProductGrid();
+      renderBasket();
+      renderFavoritePanel();
+    }
+    if(page === "favorites"){
+      renderFavoritesPage();
+      renderFavoritePanel();
+    }
+    if(page === "basket"){
+      renderBasketPage();
+      renderBasket();
+    }
+    if(page === "product"){
+      renderProductDetailPage();
+      renderFavoritePanel();
+    }
+
     syncFavoriteButtonStates();
     updateHeaderCounts();
     initHeaderControls();
@@ -438,29 +610,31 @@
     var frame = document.getElementById("baFrame");
     var after = document.getElementById("baAfter");
     var handle = document.getElementById("baHandle");
-    function setPos(pct){
-      pct = Math.max(0, Math.min(100, pct));
-      after.style.width = pct + "%";
-      handle.style.left = pct + "%";
-      handle.setAttribute("aria-valuenow", Math.round(pct));
+    if(frame && after && handle){
+      function setPos(pct){
+        pct = Math.max(0, Math.min(100, pct));
+        after.style.width = pct + "%";
+        handle.style.left = pct + "%";
+        handle.setAttribute("aria-valuenow", Math.round(pct));
+      }
+      function dragMove(clientX){
+        var rect = frame.getBoundingClientRect();
+        var pct = ((clientX - rect.left) / rect.width) * 100;
+        setPos(pct);
+      }
+      var dragging = false;
+      handle.addEventListener("mousedown", function(){ dragging = true; });
+      window.addEventListener("mouseup", function(){ dragging = false; });
+      window.addEventListener("mousemove", function(e){ if(dragging) dragMove(e.clientX); });
+      handle.addEventListener("touchstart", function(){ dragging = true; }, {passive:true});
+      window.addEventListener("touchend", function(){ dragging = false; });
+      window.addEventListener("touchmove", function(e){ if(dragging && e.touches[0]) dragMove(e.touches[0].clientX); }, {passive:true});
+      handle.addEventListener("keydown", function(e){
+        var current = parseFloat(after.style.width) || 52;
+        if(e.key === "ArrowLeft"){ setPos(current - 5); e.preventDefault(); }
+        if(e.key === "ArrowRight"){ setPos(current + 5); e.preventDefault(); }
+      });
     }
-    function dragMove(clientX){
-      var rect = frame.getBoundingClientRect();
-      var pct = ((clientX - rect.left) / rect.width) * 100;
-      setPos(pct);
-    }
-    var dragging = false;
-    handle.addEventListener("mousedown", function(){ dragging = true; });
-    window.addEventListener("mouseup", function(){ dragging = false; });
-    window.addEventListener("mousemove", function(e){ if(dragging) dragMove(e.clientX); });
-    handle.addEventListener("touchstart", function(){ dragging = true; }, {passive:true});
-    window.addEventListener("touchend", function(){ dragging = false; });
-    window.addEventListener("touchmove", function(e){ if(dragging && e.touches[0]) dragMove(e.touches[0].clientX); }, {passive:true});
-    handle.addEventListener("keydown", function(e){
-      var current = parseFloat(after.style.width) || 52;
-      if(e.key === "ArrowLeft"){ setPos(current - 5); e.preventDefault(); }
-      if(e.key === "ArrowRight"){ setPos(current + 5); e.preventDefault(); }
-    });
 
     var nlForm = document.getElementById("nlForm");
     var nlMsg = document.getElementById("nlMsg");
